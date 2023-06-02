@@ -13,3 +13,8 @@ repos:
     hooks:
      - id: detect-secrets
        args: ['--baseline', '.secrets.baseline']
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.23.1
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows

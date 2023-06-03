@@ -7,9 +7,29 @@ on:
     branches:
       - main
 permissions: write-all
+env:
+  NOMAD_VERSION: 1.5.6
+  NOMAD_BASE_URL: https://releases.hashicorp.com/nomad
 jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: Get Nomad
+        run: |
+          curl $NOMAD_BASE_URL/$NOMAD_VERSION/nomad_$NOMAD_VERSION_linux_arm64.zip | gunzip -> /usr/bin/nomad
+          chmod u+x /usr/bin/nomad
+
+      - name: Check nomad
+        run: nomad -version
   release:
     name: release
+    needs:
+      - deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

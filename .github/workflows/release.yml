@@ -23,9 +23,10 @@ jobs:
         run: |
           curl -fSL "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip" | gunzip -> nomad
           chmod u+x nomad
-
-      - name: Check nomad
-        run: ./nomad -version
+      - name: Validate Nomad job
+        run: ./nomad validate st2.nomad
+      - name: Plan
+        run: ./nomad plan st2.nomad
   release:
     name: release
     needs:

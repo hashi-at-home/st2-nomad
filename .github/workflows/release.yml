@@ -7,9 +7,39 @@ on:
     branches:
       - main
 permissions: write-all
+env:
+  NOMAD_VERSION: 1.5.6
+  NOMAD_BASE_URL: https://releases.hashicorp.com/nomad
+  NOMAD_ADDR: ${{ vars.NOMAD_ADDR }}
 jobs:
+  deploy:
+    continue-on-error: true
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v1
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get Nomad
+        run: |
+          curl -fSL "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip" | gunzip -> nomad
+          chmod u+x nomad
+      - name: Validate Nomad job
+        run: ./nomad validate st2.nomad
+      - name: Plan
+        id: plan
+        run: ./nomad plan st2.nomad || echo PLAN_OUT=$? >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+      - name: Check error
+        run: echo "There was an error"
+        if: ${{ steps.plan.outputs.PLAN_OUT != 1 }}
   release:
     name: release
+    needs:
+      - deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

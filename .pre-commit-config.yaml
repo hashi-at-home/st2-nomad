@@ -25,3 +25,23 @@ repos:
         stages: ["commit-msg"]
         additional_dependencies:
           - "@commitlint/config-conventional"
+  - repo: local
+    hooks:
+      - id: nomad-validate
+        name: Nomad Validate
+        entry: nomad validate
+        language: system
+        files: ^.*\.nomad
+      - id: nomad-fmt
+        name: Nomad Format
+        entry: nomad fmt
+        language: system
+        files: ^.*\.nomad
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    For more information, see https://pre-commit.ci
+  autofix_prs: true
+  skip:
+    - nomad-validate

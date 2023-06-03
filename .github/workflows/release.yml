@@ -21,8 +21,7 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Get Nomad
         run: |
-          echo "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd.zip"
-          curl "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd.zip" | gunzip -> nomad
+          curl -fSL "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip" | gunzip -> nomad
           chmod u+x nomad
 
       - name: Check nomad

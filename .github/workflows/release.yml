@@ -19,6 +19,8 @@ jobs:
         uses: tailscale/github-action@v1
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Get Nomad
         run: |
           curl -fSL "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip" | gunzip -> nomad

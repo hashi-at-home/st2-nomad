@@ -21,11 +21,11 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Get Nomad
         run: |
-          curl $NOMAD_BASE_URL/$NOMAD_VERSION/nomad_$NOMAD_VERSION_linux_arm64.zip | gunzip -> /usr/bin/nomad
-          chmod u+x /usr/bin/nomad
+          curl $NOMAD_BASE_URL/$NOMAD_VERSION/nomad_$NOMAD_VERSION_linux_arm64.zip | gunzip -> nomad
+          chmod u+x nomad
 
       - name: Check nomad
-        run: nomad -version
+        run: ./nomad -version
   release:
     name: release
     needs:

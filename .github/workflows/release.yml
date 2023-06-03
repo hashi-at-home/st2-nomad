@@ -13,6 +13,7 @@ env:
   NOMAD_ADDR: ${{ vars.NOMAD_ADDR }}
 jobs:
   deploy:
+    continue-on-error: true
     name: Deploy
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +31,10 @@ jobs:
         run: ./nomad validate st2.nomad
       - name: Plan
         run: ./nomad plan st2.nomad
+        continue-on-error: true
+      - name: Check error
+        run: echo "::error "
+        if: ${{ failure() }}
   release:
     name: release
     needs:

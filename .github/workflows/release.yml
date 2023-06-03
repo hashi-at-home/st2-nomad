@@ -30,11 +30,12 @@ jobs:
       - name: Validate Nomad job
         run: ./nomad validate st2.nomad
       - name: Plan
-        run: ./nomad plan st2.nomad
+        id: plan
+        run: ./nomad plan st2.nomad || echo PLAN_OUT=$? >> "$GITHUB_OUTPUT"
         continue-on-error: true
       - name: Check error
-        run: echo "::error "
-        if: ${{ failure() }}
+        run: echo "There was an error"
+        if: ${{ steps.plan.outputs.PLAN_OUT != 1 }}
   release:
     name: release
     needs:

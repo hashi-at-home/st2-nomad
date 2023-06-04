@@ -6,7 +6,18 @@ on:
   pull_request:
     branches:
       - main
-permissions: write-all
+permissions:
+  actions: write
+  checks: write
+  contents: write
+  deployments: write
+  id-token: write
+  issues: write
+  packages: write
+  pull-requests: write
+  repository-projects: write
+  statuses: write
+
 env:
   PACKER_VERSION: 1.8.5
   PACKER_BASE_URL: https://releases.hashicorp.com/packer

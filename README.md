@@ -2,7 +2,12 @@
 
 # st2-nomad
 
-Deploy StackStorm on Nomad
+Deploy StackStorm on Nomad.
+This is created as a use case for [hashiatho.me](https://hashiatho.me), so relevant constraints apply:
+
+1. Small footprint
+1. ARM images for Raspberry Pis
+
 
 ## Backing services
 

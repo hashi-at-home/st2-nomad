@@ -43,7 +43,7 @@ source "docker" "mongodb-arm64" {
     "-d", "-i", "-t", "--entrypoint=/bin/bash", "--name=mongodb-arm64",
     "--", "{{ .Image}}"
   ]
-  platform = "linux/arm64v8"
+  platform = "linux/arm64/v8"
 }
 
 build {

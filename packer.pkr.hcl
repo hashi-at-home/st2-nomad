@@ -35,6 +35,13 @@ variable "apt_dependencies" {
     "snmp"
   ]
 }
+
+variable "mongo_version" {
+  type        = string
+  description = "Version of the mongo community server to use"
+  default     = "6.0.6"
+}
+
 source "docker" "mongodb-arm64" {
   image  = "arm64v8/ubuntu:22.04"
   commit = true
@@ -70,15 +77,15 @@ build {
 
   provisioner "shell" {
     inline = [
-      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2204-6.0.6.tgz | tar xvz --strip-components=1 -C /",
+      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2204-${var.mongo_version}.tgz | tar xvz --strip-components=1 -C /",
       "which mongod"
     ]
   }
 
   post-processors {
     post-processor "docker-tag" {
-      repository = "ghcr.io/hashi-at-home/mongo-server"
-      tags       = ["latest"]
+      repository = "ghcr.io/hashi-at-home/st2-nomad/mongo-server"
+      tags       = ["mongo-v${var.mongo_version}-latest"]
     }
     post-processor "docker-push" {
       login          = true

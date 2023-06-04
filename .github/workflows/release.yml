@@ -24,6 +24,8 @@ jobs:
         run: |
           curl -fSL "${PACKER_BASE_URL}/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" | gunzip -> packer
           chmod u+x packer
+      - name: Packer init
+        run: ./packer init packer.pkr.hcl
       - name: Validate Packer template
         run: ./packer validate packer.pkr.hcl
       - name: Build image

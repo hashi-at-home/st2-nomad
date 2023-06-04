@@ -14,8 +14,6 @@ variable "apt_dependencies" {
     "curl",
     "libcurl4",
     "libgssapi-krb5-2",
-    //  "libldap-2.4-2",
-    // "libldap-common",
     "libldap-2.5-0",
     "libwrap0",
     "libsasl2-2",
@@ -45,7 +43,7 @@ source "docker" "mongodb-arm64" {
     "-d", "-i", "-t", "--entrypoint=/bin/bash", "--name=mongodb-arm64",
     "--", "{{ .Image}}"
   ]
-  // platform = "linux/arm64v8"
+  platform = "linux/arm64v8"
 }
 
 build {

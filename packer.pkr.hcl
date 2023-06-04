@@ -7,6 +7,16 @@ packer {
   }
 }
 
+variable "reg_password" {
+  default   = env("GITHUB_TOKEN")
+  sensitive = true
+}
+
+variable "reg_username" {
+  default   = env("REG_USERNAME")
+  sensitive = false
+}
+
 variable "apt_dependencies" {
   type        = list(string)
   description = "List of OS level dependencies"
@@ -69,6 +79,12 @@ build {
     post-processor "docker-tag" {
       repository = "ghcr.io/hashi-at-home/mongo-server"
       tags       = ["latest"]
+    }
+    post-processor "docker-push" {
+      login          = true
+      login_username = var.reg_username
+      login_password = var.reg_password
+      login_server   = "https://ghcr.io"
     }
   }
 }

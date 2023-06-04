@@ -13,6 +13,7 @@ env:
   NOMAD_VERSION: 1.5.6
   NOMAD_BASE_URL: https://releases.hashicorp.com/nomad
   NOMAD_ADDR: ${{ vars.NOMAD_ADDR }}
+  REG_USERNAME: ${{ github.actor }}
 jobs:
   build:
     name: Build

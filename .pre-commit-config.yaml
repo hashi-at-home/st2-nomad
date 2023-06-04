@@ -37,6 +37,17 @@ repos:
         entry: nomad fmt
         language: system
         files: ^.*\.nomad
+      - id: packer-fmt
+        name: Packer fmt
+        entry: packer fmt
+        language: system
+        files: ^.*.pkr.hcl
+      - id: packer-validate
+        name: Packer validate
+        entry: packer validate
+        language: system
+        files: ^.*.pkr.hcl
+
 ci:
   autofix_commit_msg: |
     [pre-commit.ci] auto fixes from pre-commit.com hooks
@@ -45,3 +56,6 @@ ci:
   autofix_prs: true
   skip:
     - nomad-validate
+    - nomad-fmt
+    - packer-validate
+    - packer-fmt

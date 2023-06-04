@@ -8,11 +8,39 @@ on:
       - main
 permissions: write-all
 env:
+  PACKER_VERSION: 1.8.5
+  PACKER_BASE_URL: https://releases.hashicorp.com/packer
   NOMAD_VERSION: 1.5.6
   NOMAD_BASE_URL: https://releases.hashicorp.com/nomad
   NOMAD_ADDR: ${{ vars.NOMAD_ADDR }}
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get Packer
+        run: |
+          curl -fSL "${PACKER_BASE_URL}/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" | gunzip -> packer
+          chmod u+x packer
+      - name: Packer init
+        run: ./packer init packer.pkr.hcl
+      - name: Validate Packer template
+        run: ./packer validate packer.pkr.hcl
+      - name: Build image
+        run: ./packer build packer.pkr.hcl
+        env:
+          REG_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   deploy:
+    needs:
+      - build
     continue-on-error: true
     name: Deploy
     runs-on: ubuntu-latest

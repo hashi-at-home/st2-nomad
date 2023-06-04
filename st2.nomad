@@ -68,4 +68,31 @@ job "stackstorm" {
       }
     }
   }
+
+  group "mongodb" {
+    network {
+      mode = "bridge"
+      port "mongod" {
+        to = 27017
+      }
+    }
+
+    task "main" {
+      driver = "docker"
+      config {
+        image = "mongodb/mongodb-community-server"
+      }
+
+      service {
+        name = "mongodb"
+        tags = ["urlprefix-/mongodb"]
+        port = "mongod"
+        check {
+          type     = "tcp"
+          interval = "30s"
+          timeout  = "5s"
+        }
+      }
+    }
+  }
 }

@@ -28,6 +28,7 @@ variable "apt_dependencies" {
 source "docker" "mongodb-arm64" {
   image  = "arm64v8/ubuntu:22.04"
   commit = true
+  pull   = true
   changes = [
     "LABEL org.opencontainers.image.source=https://github.com/hashi-at-home/st2-nomad",
     "LABEL org.opencontainers.image.licenses=MPL",

@@ -21,7 +21,10 @@ variable "apt_dependencies" {
   type        = list(string)
   description = "List of OS level dependencies"
   default = [
+    "ca-certificates",
     "curl",
+    "gnupg",
+    "jq",
     "libcurl4",
     "libgssapi-krb5-2",
     "libldap-2.5-0",
@@ -29,8 +32,10 @@ variable "apt_dependencies" {
     "libsasl2-2",
     "libsasl2-modules",
     "libsasl2-modules-gssapi-mit",
-    "openssl",
     "liblzma5",
+    "numactl",
+    "openssl",
+    "procps",
     "python3",
     "snmp"
   ]
@@ -49,7 +54,7 @@ source "docker" "mongodb-arm64" {
   changes = [
     "LABEL org.opencontainers.image.source=https://github.com/hashi-at-home/st2-nomad",
     "LABEL org.opencontainers.image.licenses=MPL",
-    "ENTRYPOINT [\"python3\", \"/usr/local/bin/docker-entrypoint.py\"]",
+    "ENTRYPOINT [\"mongod\"]",
     "CMD mongod",
     "VOLUME /data/configdb",
     "VOLUME /data/db",
@@ -72,6 +77,15 @@ build {
       "uname -a",
       "apt-get update",
       "apt-get install -yq ${join(" ", var.apt_dependencies)}"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "groupadd --gid 999 --system mongodb",
+      "useradd --uid 999 --system --gid mongodb --home-dir /data/db mongodb",
+      "mkdir -p /data/db /data/configdb",
+      "chown -R mongodb:mongodb /data/db /data/configdb"
     ]
   }
 

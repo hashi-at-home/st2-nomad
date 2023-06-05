@@ -1,3 +1,7 @@
+variable "mongo_tag" {
+  default = "mongo-v6.0.6-latest"
+}
+
 job "stackstorm" {
   datacenters = ["dc1"]
   type        = "service"
@@ -80,7 +84,7 @@ job "stackstorm" {
     task "main" {
       driver = "docker"
       config {
-        image = "mongodb/mongodb-community-server"
+        image = "ghcr.io/hashi-at-home/st2-nomad/mongo-server:${var.mongo_tag}"
       }
 
       service {

@@ -37,7 +37,9 @@ variable "apt_dependencies" {
     "openssl",
     "procps",
     "python3",
-    "snmp"
+    "python3-virtualenv",
+    "snmp",
+    "tzdata"
   ]
 }
 
@@ -54,7 +56,7 @@ source "docker" "mongodb-arm64" {
   changes = [
     "LABEL org.opencontainers.image.source=https://github.com/hashi-at-home/st2-nomad",
     "LABEL org.opencontainers.image.licenses=MPL",
-    "ENTRYPOINT [\"mongod\"]",
+    "ENTRYPOINT [\"mongod\", \"--dbpath /data/db/\"]",
     "CMD mongod",
     "VOLUME /data/configdb",
     "VOLUME /data/db",
@@ -80,19 +82,24 @@ build {
     ]
   }
 
+  # Prepare environment
   provisioner "shell" {
     inline = [
       "groupadd --gid 999 --system mongodb",
       "useradd --uid 999 --system --gid mongodb --home-dir /data/db mongodb",
-      "mkdir -p /data/db /data/configdb",
-      "chown -R mongodb:mongodb /data/db /data/configdb"
+      "mkdir -vp /data/db /data/configdb /build",
+      "chown -R mongodb:mongodb /data/db /data/configdb /build"
     ]
   }
 
   provisioner "shell" {
     inline = [
-      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2204-${var.mongo_version}.tgz | tar xvz --strip-components=1 -C /",
-      "which mongod"
+      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-src-r${var.mongo_version}.tar.gz | tar xvz --strip-components=1 -C /build",
+      "cd /build",
+      "virtualenv mongodb",
+      "source mongodb/bin/activate",
+      "buildscripts/scons.py mongod",
+      "find . -name \"mongod\""
     ]
   }
 

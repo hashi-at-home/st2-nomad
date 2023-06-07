@@ -94,11 +94,11 @@ build {
 
   provisioner "shell" {
     inline = [
-      "curl -fSL https://fastdl.mongodb.org/src/mongodb-src-r${var.mongo_version}.tar.gz | tar xvz --strip-components=1 -C /build",
+      "curl -fSL https://fastdl.mongodb.org/src/mongodb-src-r${var.mongo_version}.tar.gz | tar xz --strip-components=1 -C /build",
       "cd /build",
       "virtualenv mongodb ; ls -lht mongodb",
-      "source mongodb/bin/activate ; buildscripts/scons.py --prefix=/usr/local/bin/ --enable-http-client=on --ssl=on --wiredtiger=on mongod mongos",
-      "source mongodb/bin/activate ; buildscripts/scons.py install",
+      ". mongodb/bin/activate ; buildscripts/scons.py --prefix=/usr/local/bin/ --enable-http-client=on --ssl=on --wiredtiger=on mongod mongos",
+      ". mongodb/bin/activate ; buildscripts/scons.py install",
       "which mongod"
     ]
   }

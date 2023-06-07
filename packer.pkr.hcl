@@ -98,8 +98,9 @@ build {
       "cd /build",
       "virtualenv mongodb",
       "source mongodb/bin/activate",
-      "buildscripts/scons.py mongod",
-      "find . -name \"mongod\""
+      "buildscripts/scons.py --prefix=/usr/local/bin/ --enable-http-client=on --ssl=on --wiredtiger=on mongod mongos",
+      "buildscripts/scons.py install",
+      "which mongod"
     ]
   }
 

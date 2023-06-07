@@ -94,7 +94,7 @@ build {
 
   provisioner "shell" {
     inline = [
-      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-src-r${var.mongo_version}.tar.gz | tar xvz --strip-components=1 -C /build",
+      "curl -fSL https://fastdl.mongodb.org/src/mongodb-src-r${var.mongo_version}.tar.gz | tar xvz --strip-components=1 -C /build",
       "cd /build",
       "virtualenv mongodb",
       "source mongodb/bin/activate",

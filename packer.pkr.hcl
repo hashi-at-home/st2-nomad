@@ -78,7 +78,7 @@ build {
     inline = [
       "uname -a",
       "apt-get update",
-      "apt-get install -yq ${join(" ", var.apt_dependencies)}"
+      "DEBIAN_FRONTEND=noninteractiveapt-get install -yq ${join(" ", var.apt_dependencies)}"
     ]
   }
 

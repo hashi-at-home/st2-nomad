@@ -32,6 +32,7 @@ variable "apt_dependencies" {
     "libsasl2-2",
     "libsasl2-modules",
     "libsasl2-modules-gssapi-mit",
+    "libssl-dev",
     "liblzma5",
     "numactl",
     "openssl",

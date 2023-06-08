@@ -26,6 +26,7 @@ variable "apt_dependencies" {
     "gnupg",
     "jq",
     "libcurl4",
+    "libcurl4-openssl-dev",
     "libgssapi-krb5-2",
     "libldap-2.5-0",
     "libwrap0",

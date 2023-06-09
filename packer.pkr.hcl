@@ -104,7 +104,7 @@ build {
       "cd /build",
       "virtualenv mongodb ; ls -lht mongodb",
       ". mongodb/bin/activate ; pip install -r ./etc/pip/dev-requirements.txt",
-      ". mongodb/bin/activate ; buildscripts/scons.py  core --enable-http-client=on --ssl=on --wiredtiger=on",
+      ". mongodb/bin/activate ; buildscripts/scons.py  --enable-http-client=on --ssl=on --wiredtiger=on",
       ". mongodb/bin/activate ; buildscripts/scons.py install",
       "which mongod"
     ]

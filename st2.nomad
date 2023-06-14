@@ -1,5 +1,5 @@
 variable "mongo_tag" {
-  default = "mongo-v6.0.6-latest"
+  default = "4.2.18"
 }
 
 job "stackstorm" {
@@ -84,7 +84,8 @@ job "stackstorm" {
     task "main" {
       driver = "docker"
       config {
-        image = "ghcr.io/hashi-at-home/st2-nomad/mongo-server:${var.mongo_tag}"
+        image = "arm64v8/mongo:${var.mongo_tag}"
+        args  = ["--dbpath", "/data/db/"]
       }
 
       service {

@@ -1,3 +1,7 @@
+variable "mongo_tag" {
+  default = "4.2.18"
+}
+
 job "stackstorm" {
   datacenters = ["dc1"]
   type        = "service"
@@ -80,7 +84,8 @@ job "stackstorm" {
     task "main" {
       driver = "docker"
       config {
-        image = "mongodb/mongodb-community-server"
+        image = "arm64v8/mongo:${var.mongo_tag}"
+        args  = ["--dbpath", "/data/db/"]
       }
 
       service {

@@ -21,20 +21,37 @@ variable "apt_dependencies" {
   type        = list(string)
   description = "List of OS level dependencies"
   default = [
+    "ca-certificates",
     "curl",
+    "gnupg",
+    "jq",
     "libcurl4",
+    "libcurl4-openssl-dev",
     "libgssapi-krb5-2",
     "libldap-2.5-0",
     "libwrap0",
     "libsasl2-2",
     "libsasl2-modules",
     "libsasl2-modules-gssapi-mit",
-    "openssl",
+    "libssl-dev",
     "liblzma5",
+    "liblzma-dev",
+    "numactl",
+    "openssl",
+    "procps",
     "python3",
-    "snmp"
+    "python3-virtualenv",
+    "snmp",
+    "tzdata"
   ]
 }
+
+variable "mongo_version" {
+  type        = string
+  description = "Version of the mongo community server to use"
+  default     = "6.0.6"
+}
+
 source "docker" "mongodb-arm64" {
   image  = "arm64v8/ubuntu:22.04"
   commit = true
@@ -42,7 +59,7 @@ source "docker" "mongodb-arm64" {
   changes = [
     "LABEL org.opencontainers.image.source=https://github.com/hashi-at-home/st2-nomad",
     "LABEL org.opencontainers.image.licenses=MPL",
-    "ENTRYPOINT [\"python3\", \"/usr/local/bin/docker-entrypoint.py\"]",
+    "ENTRYPOINT [\"mongod\", \"--dbpath /data/db/\"]",
     "CMD mongod",
     "VOLUME /data/configdb",
     "VOLUME /data/db",
@@ -64,21 +81,40 @@ build {
     inline = [
       "uname -a",
       "apt-get update",
-      "apt-get install -yq ${join(" ", var.apt_dependencies)}"
+      "DEBIAN_FRONTEND=noninteractive apt-get install -yq ${join(" ", var.apt_dependencies)}"
+    ]
+  }
+
+  # Prepare environment
+  provisioner "shell" {
+    inline = [
+      "groupadd --gid 999 --system mongodb",
+      "useradd --uid 999 --system --gid mongodb --home-dir /data/db mongodb",
+      "mkdir -vp /data/db /data/configdb /build",
+      "chown -R mongodb:mongodb /data/db /data/configdb /build"
     ]
   }
 
   provisioner "shell" {
+    environment_vars = [
+      "PREFIX=/usr/local/",
+      "DESTDIR=/opt/mongo"
+    ]
     inline = [
-      "curl -fSL https://fastdl.mongodb.org/linux/mongodb-linux-aarch64-ubuntu2204-6.0.6.tgz | tar xvz --strip-components=1 -C /",
+      "curl -fSL https://fastdl.mongodb.org/src/mongodb-src-r${var.mongo_version}.tar.gz | tar xz --strip-components=1 -C /build",
+      "cd /build",
+      "virtualenv mongodb ; ls -lht mongodb",
+      ". mongodb/bin/activate ; pip install -r ./etc/pip/dev-requirements.txt",
+      ". mongodb/bin/activate ; buildscripts/scons.py install-mongod install-mongo install-mongos --enable-http-client=on --ssl=on --wiredtiger=on -j2",
+      ". mongodb/bin/activate ; buildscripts/scons.py install",
       "which mongod"
     ]
   }
 
   post-processors {
     post-processor "docker-tag" {
-      repository = "ghcr.io/hashi-at-home/mongo-server"
-      tags       = ["latest"]
+      repository = "ghcr.io/hashi-at-home/st2-nomad/mongo-server"
+      tags       = ["mongo-v${var.mongo_version}-latest"]
     }
     post-processor "docker-push" {
       login          = true

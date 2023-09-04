@@ -34,7 +34,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get Packer
         run: |
           curl -fSL "${PACKER_BASE_URL}/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip" | gunzip -> packer
@@ -61,7 +61,7 @@ jobs:
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get Nomad
         run: |
           curl -fSL "${NOMAD_BASE_URL}/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip" | gunzip -> nomad
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
